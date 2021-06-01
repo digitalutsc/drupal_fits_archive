@@ -1,0 +1,9 @@
+name: 'Islandora Lite Fits'
+type: module
+description: 'This module represent DSU''s approach toward Fits in our Islandora Lite Stack'
+core_version_requirement: '^8 || ^9'
+package: 'Islandora Lite'
+dependencies:
+  - drupal:json_field
+  - drupal:double_field
+  - advancedqueue:advancedqueue

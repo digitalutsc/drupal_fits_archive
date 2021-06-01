@@ -1,0 +1,13 @@
+{
+    "name": "islandora_lite_fits",
+    "type": "drupal-module",
+    "description": "This module represent DSU's approach toward Fits in our Islandora Lite Stack",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/islandora_lite_fits",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/islandora_lite_fits",
+        "source": "http://cgit.drupalcode.org/islandora_lite_fits",
+    },
+}
