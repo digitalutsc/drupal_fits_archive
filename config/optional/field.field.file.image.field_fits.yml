@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.file.field_fits
+    - file_entity.type.image
+  module:
+    - json_field
+id: file.image.field_fits
+field_name: field_fits
+entity_type: file
+bundle: image
+label: Fits
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: json_native

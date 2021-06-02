@@ -1,0 +1,252 @@
+<?php
+
+/**
+ * @file
+ * Contains fits.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use GuzzleHttp\Client;
+
+/**
+ * Implements hook_help().
+ */
+function fits_help($route_name, RouteMatchInterface $route_match)
+{
+  switch ($route_name) {
+    // Main module help for the islandora_lite_fits module.
+    case 'help.page.islandora_lite_fits':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module represent DSU&#039;&#039;s approach toward Fits in our Islandora Lite Stack') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function fits_theme()
+{
+  return [
+    'islandora_lite_fits' => [
+      'render element' => 'children',
+    ],
+  ];
+}
+
+function fits_node_presave($node)
+{
+  print_log("fits_node_presave");
+
+}
+
+/**
+ * Implement hook_entity_insert
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
+ */
+function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
+{
+  print_log(fits_entity_insert);
+  // only extract Fits for File level only
+  if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
+    save_entity_fits_fields($entity);
+  }
+
+}
+
+/**
+ * Implement hook_entity_update
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
+ */
+function fits_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
+  print_log(fits_entity_update);
+  if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
+    //save_entity_fits_fields($entity);
+  }
+}
+
+function fits_file_presave(Drupal\Core\Entity\EntityInterface $entity) {
+  print_log(fits_file_presave);
+}
+
+/**
+ * Implement hook_file_view
+ *
+ * @param array $build
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+ * @param $view_mode
+ */
+function fits_file_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode)
+{
+  print_log("fits_file_view");
+  /*
+  print_log("checksum: ". JmesPath\search('fileinfo.md5checksum', $fits));
+  print_log("size: ". JmesPath\search('fileinfo.size', $fits));
+  $jmespath = $file->field_fits_other->getFieldDefinition()->getDescription();
+  print_log(JmesPath\search($jmespath, $fits));
+  */
+
+  $file = \Drupal\file\Entity\File::load($entity->id());
+  $fits = json_decode($file->field_fits->getValue()[0]['value']);
+  print_log(JmesPath\search('identification.identity[0].""', $fits));
+}
+
+
+/**
+ * Implement hook_form_FORM_ID_alter
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function fits_form_file_video_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+  print_log("fits_form_file_video_edit_form_alter");
+}
+
+/**
+ * Implement hook_form_FORM_ID_alter
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function fits_form_field_config_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+  print_log("fits_form_field_config_edit_form_alter");
+}
+
+
+/**
+ * Shared function call for extract Fits data and save to entity's field
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
+ */
+function save_entity_fits_fields(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $file = \Drupal\file\Entity\File::load($entity->id());
+    if (!isset($file)) {
+      return;
+    }
+    // extract Fits from xml
+    $fits_xml = getFits($file);
+    $fits = simplexml_load_string($fits_xml);
+    $fit_json = json_encode($fits);
+
+    // store the whole fits to json field, use either one of theme. Choose after determine which one is better.
+    $file->field_fits->setValue($fit_json);
+
+    $fits = json_decode($fit_json);
+
+    // extract default Fits fields
+    $file->field_fits_checksum->setValue(JmesPath\search($file->field_fits_checksum->getFieldDefinition()->getDescription(), $fits));
+    $file->field_fits_file_size->setValue(JmesPath\search($file->field_fits_file_size->getFieldDefinition()->getDescription(), $fits));
+    $file->field_fits_file_format->setValue(JmesPath\search($file->field_fits_file_format->getFieldDefinition()->getDescription(), $fits));
+    $file->field_fits_mimetype->setValue(JmesPath\search($file->field_fits_mimetype->getFieldDefinition()->getDescription(), $fits));
+
+    // exclude for image or audio
+    if (in_array($entity->bundle(), ["image"])) {
+      $file->field_fits_height->setValue(JmesPath\search($file->field_fits_height->getFieldDefinition()->getDescription(), $fits));
+      $file->field_fits_width->setValue(JmesPath\search($file->field_fits_width->getFieldDefinition()->getDescription(), $fits));
+    }
+
+    // extract selective fields and save to other fields
+    $file->save();
+
+}
+
+
+/**
+ * [Unused] Loop through Fits json and get all of attributes and values
+ * Call: iteratingFitsJsonObj((array)$fits, $index, $file);
+ * https://www.opentechguides.com/how-to/article/php/205/php-nested-json.html
+ * @param $arr
+ * @param $index
+ * @param $file
+ */
+function iteratingFitsJsonObj($arr, $index, $file)
+{
+
+  foreach ($arr as $key => $val) {
+    if (is_object($val))
+      $val = (array)$val;
+    if (is_array($val)) {
+      $index = iteratingFitsJsonObj($val, $index, $file);
+
+    } else {
+      //print_log("$index: $key = $val");
+      $file->field_fits_fields->set($index, ['first' => $key, 'second' => $val]);
+      $index++;
+    }
+  }
+
+  return $index;
+}
+
+
+/**
+ * Debug function: display any variable to error log
+ *
+ * @param $thing
+ */
+if (!function_exists('print_log')) {
+  function print_log($thing)
+  {
+    error_log(print_r($thing, true), 0);
+  }
+
+}
+/**
+ * Debug function: display any variable to current webpage
+ * @param $thing
+ */
+if (!function_exists('logging')) {
+  function logging($thing)
+  {
+    echo "<pre>";
+    print_r($thing);
+    echo "</pre>";
+  }
+}
+
+/**
+ * Rest call to Fits
+ * @param \Drupal\file\Entity\File $file
+ * @return string
+ */
+function getFits(\Drupal\file\Entity\File $file)
+{
+  try {
+    $options = [
+      'base_uri' => "http://192.168.3.99:8080/fits/"
+    ];
+
+    $client = new Client($options);
+    $response = $client->post('examine', [
+      'multipart' => [
+        [
+          'name' => 'datafile',
+          'filename' => $file->label(),
+          'contents' => file_get_contents($file->getFileUri()),
+        ],
+      ]
+    ]);
+
+    return $response->getBody()->getContents();
+  } catch (Exception $e) {
+    return null;
+  }
+
+}
+

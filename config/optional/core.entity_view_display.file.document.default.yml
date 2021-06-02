@@ -1,0 +1,101 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.file.document.field_fits
+    - field.field.file.document.field_fits_checksum
+    - field.field.file.document.field_fits_file_format
+    - field.field.file.document.field_fits_file_size
+    - field.field.file.document.field_fits_mimetype
+    - file_entity.type.document
+  module:
+    - file_entity
+    - json_field
+id: file.document.default
+targetEntityType: file
+bundle: document
+mode: default
+content:
+  field_fits:
+    weight: 8
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: json
+    region: content
+  field_fits_checksum:
+    weight: 4
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_fits_file_format:
+    weight: 5
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_fits_file_size:
+    weight: 6
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_fits_mimetype:
+    weight: 7
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  filemime:
+    type: string
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  filename:
+    type: string
+    label: hidden
+    weight: -5
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  filesize:
+    type: file_size
+    weight: 3
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: uri_link
+    weight: 1
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  uri:
+    type: file_image
+    label: hidden
+    weight: -5
+    region: content
+    settings:
+      title: field_image_title_text
+      alt: field_image_alt_text
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+hidden:
+  langcode: true
+  search_api_excerpt: true
