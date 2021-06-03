@@ -55,7 +55,7 @@ function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
   print_log(fits_entity_insert);
   // only extract Fits for File level only
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
-    save_entity_fits_fields($entity);
+    save_fits_fields($entity);
   }
 
 }
@@ -70,10 +70,15 @@ function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
 function fits_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
   print_log(fits_entity_update);
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
-    //save_entity_fits_fields($entity);
+    //save_fits_fields($entity);
   }
 }
 
+/**
+ * Implement hook_file_presave
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
 function fits_file_presave(Drupal\Core\Entity\EntityInterface $entity) {
   print_log(fits_file_presave);
 }
@@ -97,13 +102,16 @@ function fits_file_view(array &$build, \Drupal\Core\Entity\EntityInterface $enti
   */
 
   $file = \Drupal\file\Entity\File::load($entity->id());
+
+  print_log(getJmespath($file->field_fits_checksum->getFieldDefinition()->getDescription()));
+
   $fits = json_decode($file->field_fits->getValue()[0]['value']);
   print_log(JmesPath\search('identification.identity[0].""', $fits));
 }
 
-
 /**
  * Implement hook_form_FORM_ID_alter
+ *
  * @param $form
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  * @param $form_id
@@ -133,7 +141,7 @@ function fits_form_field_config_edit_form_alter(&$form, \Drupal\Core\Form\FormSt
  * @throws \Drupal\Core\Entity\EntityStorageException
  * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
  */
-function save_entity_fits_fields(Drupal\Core\Entity\EntityInterface $entity)
+function save_fits_fields(Drupal\Core\Entity\EntityInterface $entity)
 {
     $file = \Drupal\file\Entity\File::load($entity->id());
     if (!isset($file)) {
@@ -150,15 +158,15 @@ function save_entity_fits_fields(Drupal\Core\Entity\EntityInterface $entity)
     $fits = json_decode($fit_json);
 
     // extract default Fits fields
-    $file->field_fits_checksum->setValue(JmesPath\search($file->field_fits_checksum->getFieldDefinition()->getDescription(), $fits));
-    $file->field_fits_file_size->setValue(JmesPath\search($file->field_fits_file_size->getFieldDefinition()->getDescription(), $fits));
-    $file->field_fits_file_format->setValue(JmesPath\search($file->field_fits_file_format->getFieldDefinition()->getDescription(), $fits));
-    $file->field_fits_mimetype->setValue(JmesPath\search($file->field_fits_mimetype->getFieldDefinition()->getDescription(), $fits));
+    $file->field_fits_checksum->setValue(jmesPathSearch(getJmespath($file->field_fits_checksum->getFieldDefinition()->getDescription()), $fits));
+    $file->field_fits_file_size->setValue(jmesPathSearch(getJmespath($file->field_fits_file_size->getFieldDefinition()->getDescription()), $fits));
+    $file->field_fits_file_format->setValue(jmesPathSearch(getJmespath($file->field_fits_file_format->getFieldDefinition()->getDescription()), $fits));
+    $file->field_fits_mimetype->setValue(jmesPathSearch(getJmespath($file->field_fits_mimetype->getFieldDefinition()->getDescription()), $fits));
 
     // exclude for image or audio
     if (in_array($entity->bundle(), ["image"])) {
-      $file->field_fits_height->setValue(JmesPath\search($file->field_fits_height->getFieldDefinition()->getDescription(), $fits));
-      $file->field_fits_width->setValue(JmesPath\search($file->field_fits_width->getFieldDefinition()->getDescription(), $fits));
+      $file->field_fits_height->setValue(jmesPathSearch(getJmespath($file->field_fits_height->getFieldDefinition()->getDescription()), $fits));
+      $file->field_fits_width->setValue(jmesPathSearch(getJmespath($file->field_fits_width->getFieldDefinition()->getDescription()), $fits));
     }
 
     // extract selective fields and save to other fields
@@ -166,6 +174,35 @@ function save_entity_fits_fields(Drupal\Core\Entity\EntityInterface $entity)
 
 }
 
+/**
+ * Analyze field's description text and get Jmespath
+ *
+ * @param $jmespath
+ * @return mixed|string[]
+ */
+function getJmespath($jmespath) {
+  if(strstr($jmespath, "\n")) {
+    return explode("\n", $jmespath);
+  }
+  return $jmespath;
+}
+
+/**
+ * @param $path is Jmespath but can set as either a string or array
+ */
+function jmesPathSearch($path, $fits) {
+  if (is_array($path)) {
+    $value = "";
+    foreach ($path as $p) {
+      $value = JmesPath\search($p, $fits);
+      if (!empty($value)) {
+        break;
+      }
+    }
+    return $value;
+  }
+  return JmesPath\search($path, $fits);
+}
 
 /**
  * [Unused] Loop through Fits json and get all of attributes and values
