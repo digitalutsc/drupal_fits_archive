@@ -101,12 +101,12 @@ function fits_file_view(array &$build, \Drupal\Core\Entity\EntityInterface $enti
   print_log(JmesPath\search($jmespath, $fits));
   */
 
-  $file = \Drupal\file\Entity\File::load($entity->id());
+  /*$file = \Drupal\file\Entity\File::load($entity->id());
 
   print_log(getJmespath($file->field_fits_checksum->getFieldDefinition()->getDescription()));
 
   $fits = json_decode($file->field_fits->getValue()[0]['value']);
-  print_log(JmesPath\search('identification.identity[0].""', $fits));
+  print_log(JmesPath\search('identification.identity[0].""', $fits));*/
 }
 
 /**
@@ -123,14 +123,59 @@ function fits_form_file_video_edit_form_alter(&$form, \Drupal\Core\Form\FormStat
 
 /**
  * Implement hook_form_FORM_ID_alter
- *
+ * Purpose: Modify the Help text field to repurpose its use to contain Jmespath
+ * Only effect for Fits related field (must contain the word "fits" to it)
  * @param $form
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  * @param $form_id
  */
 function fits_form_field_config_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
 {
-  print_log("fits_form_field_config_edit_form_alter");
+  // get all available file types
+  $fileTypes = \Drupal::entityTypeManager()
+    ->getStorage('file_type')
+    ->loadMultiple();
+  $fileTypes = array_keys($fileTypes);
+
+  // get a need key component to detect fits related fields
+  $parts = explode("/", \Drupal::service('path.current')->getPath());
+  $currentFileEntity = $parts[5];
+  $field =  $parts[count($parts) -1];
+
+  // limit JmesPath field modification for Fits related
+  if (in_array($currentFileEntity, $fileTypes) && strpos($field, "_fits_") !== false) {
+    $form['description']['#title'] = t("One or more valid JMESPaths.");
+    $form['description']['#description'] = t("<p>JMespath(s) will be evaluated against Fits JSON field to extract data. For multiple, enter them each line. <u>ie</u> Extract Image width from FITS - JMESPath: <code>metadata:image:imageWidth</code>
+    <br />For further details about JMESPath, please visit: <a href='https://jmespath.org/tutorial.html' target='_blank'>https://jmespath.org/tutorial.html</a> </p>");
+  }
+}
+
+/**
+ * Implement hook_form_FORM_ID_alter
+ * Purpose: to leave a note for use case
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function fits_form_field_ui_field_storage_add_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // get all available file types
+  $fileTypes = \Drupal::entityTypeManager()
+    ->getStorage('file_type')
+    ->loadMultiple();
+  $fileTypes = array_keys($fileTypes);
+
+  // get a need key component to detect fits related fields
+  $parts = explode("/", \Drupal::service('path.current')->getPath());
+  $currentFileEntity = $parts[5];
+
+  if (in_array($currentFileEntity, $fileTypes)) {
+    $form['note-for-fits'] = [
+      '#markup' => t('<strong>Important Note</strong>: If you are adding textfield(s) for Fits extraction with JMESPath, please make sure to have <code>_fits_</code> in the field\'s machine name (ie. <cdoe>field_fits_file_size</cdoe>)'),
+    ];
+  }
+
 }
 
 
@@ -157,16 +202,10 @@ function save_fits_fields(Drupal\Core\Entity\EntityInterface $entity)
 
     $fits = json_decode($fit_json);
 
-    // extract default Fits fields
-    $file->field_fits_checksum->setValue(jmesPathSearch(getJmespath($file->field_fits_checksum->getFieldDefinition()->getDescription()), $fits));
-    $file->field_fits_file_size->setValue(jmesPathSearch(getJmespath($file->field_fits_file_size->getFieldDefinition()->getDescription()), $fits));
-    $file->field_fits_file_format->setValue(jmesPathSearch(getJmespath($file->field_fits_file_format->getFieldDefinition()->getDescription()), $fits));
-    $file->field_fits_mimetype->setValue(jmesPathSearch(getJmespath($file->field_fits_mimetype->getFieldDefinition()->getDescription()), $fits));
-
-    // exclude for image or audio
-    if (in_array($entity->bundle(), ["image"])) {
-      $file->field_fits_height->setValue(jmesPathSearch(getJmespath($file->field_fits_height->getFieldDefinition()->getDescription()), $fits));
-      $file->field_fits_width->setValue(jmesPathSearch(getJmespath($file->field_fits_width->getFieldDefinition()->getDescription()), $fits));
+    foreach ($file->getFields() as $field) {
+      if ($field->getFieldDefinition()->getType() === "string" && strpos($field->getFieldDefinition()->getName(), "_fits_") !== false)  {
+        $field->setValue(jmesPathSearch(getJmespath($field->getFieldDefinition()->getDescription()), $fits));
+      }
     }
 
     // extract selective fields and save to other fields
@@ -188,6 +227,7 @@ function getJmespath($jmespath) {
 }
 
 /**
+ * From Jmespath(s), Get value of field from Fits json
  * @param $path is Jmespath but can set as either a string or array
  */
 function jmesPathSearch($path, $fits) {
