@@ -304,13 +304,13 @@ if (!function_exists('logging')) {
  */
 function getFits(\Drupal\file\Entity\File $file)
 {
+  $config = \Drupal::config('fits.fitsconfig');
   try {
     $options = [
-      'base_uri' => "http://192.168.3.99:8080/fits/"
+      'base_uri' => $config->get("fits-server-url")
     ];
-
     $client = new Client($options);
-    $response = $client->post('examine', [
+    $response = $client->post($config->get("fits-server-endpoint"), [
       'multipart' => [
         [
           'name' => 'datafile',

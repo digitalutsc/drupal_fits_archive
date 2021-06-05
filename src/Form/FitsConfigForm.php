@@ -72,7 +72,6 @@ class FitsConfigForm extends ConfigFormBase
       '#attributes' => ['id' => 'textfields-container'],
     ];
 
-    print_log($form_state->getValues()['method']);
     if ($form_state->getValues()['method'] === "remote" || (empty($form_state->getValues()['method']) && $config->get("fits-method") === "remote")) {
 
       $form['container']['fits-services-config']['textfields_container']['server-url'] = array(
@@ -81,7 +80,7 @@ class FitsConfigForm extends ConfigFormBase
         '#title' => $this
           ->t('Fits XML Services URL:'),
         '#default_value' => ($config->get("fits-server-url") !== null) ? $config->get("fits-server-url") : "",
-        '#description' => $this->t('For example: <code>http://localhost:8080/fits</code>')
+        '#description' => $this->t('For example: <code>http://localhost:8080/fits/</code>')
       );
 
       $form['container']['fits-services-config']['textfields_container']['endpoint'] = array(
@@ -90,11 +89,10 @@ class FitsConfigForm extends ConfigFormBase
         '#title' => $this
           ->t('Fits XML Services Endpoint:'),
         '#default_value' => ($config->get("fits-server-endpoint") !== null) ? $config->get("fits-server-endpoint") : "",
-        '#description' => $this->t('For example: <code>/examine</code>')
+        '#description' => $this->t('For example: <code>examine</code>')
       );
     }
     else if ($form_state->getValues()['method'] === "local" || (empty($form_state->getValues()['method']) && $config->get("fits-method") === "local")) {
-      print_log($config->get("fits-path"));
       $form['container']['fits-services-config']['textfields_container']['fits-path'] = array(
         '#type' => 'textfield',
         '#title' => $this
