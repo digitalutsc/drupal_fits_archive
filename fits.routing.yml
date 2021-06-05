@@ -1,0 +1,9 @@
+fits.fits_config_form:
+  path: 'admin/config/system/fits'
+  defaults:
+    _form: '\Drupal\fits\Form\FitsConfigForm'
+    _title: 'Fits Configuration'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

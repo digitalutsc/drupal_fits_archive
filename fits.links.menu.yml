@@ -1,0 +1,6 @@
+fits.fits_config_form:
+  title: 'Fits'
+  route_name: fits.fits_config_form
+  description: 'Manage Fits Configuration'
+  parent: system.admin_config_system
+  weight: 99
