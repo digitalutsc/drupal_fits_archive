@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - fits
+id: fits_action
+label: 'FITS - Generate and Extract Technical metadata for File'
+type: file
+plugin: fits_action
