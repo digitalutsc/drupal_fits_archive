@@ -96,7 +96,7 @@ class FitsConfigForm extends ConfigFormBase
       $form['container']['fits-services-config']['textfields_container']['fits-path'] = array(
         '#type' => 'textfield',
         '#title' => $this
-          ->t('Fits path:'),
+          ->t('System path to FITS processor:'),
         '#default_value' => ($config->get("fits-path") !== null) ? $config->get("fits-path") : "",
         '#description' => $this->t('Example: <code>/usr/bin/fits.sh</code>')
       );
