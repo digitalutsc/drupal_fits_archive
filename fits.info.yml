@@ -6,4 +6,5 @@ package: 'custom'
 dependencies:
   - drupal:json_field
   - drupal:file_entity
+  - drupal:field_permissions
   - advancedqueue:advancedqueue
