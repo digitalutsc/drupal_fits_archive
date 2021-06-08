@@ -55,7 +55,7 @@ class FitsConfigForm extends ConfigFormBase
         '#options' => array(
           0 => '-- Select --',
           'remote' => 'FITS extraction service endpoint url',
-          'local' => 'Extract FITS for files (not available)'
+          'local' => 'Extract FITS for files'
         ),
       '#required' => true,
       '#ajax' => [
@@ -122,7 +122,7 @@ class FitsConfigForm extends ConfigFormBase
 
     $form['container']['fits-services-config']['extact-fits-while-ingesting'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Enable extracting Fits during Ingest'),
+      '#title' => $this->t('Enable extracting Fits during Ingest (Not available yet)'),
       '#default_value' => ($config->get("fits-extract-ingesting") !== null) ? $config->get("fits-extract-ingesting") : 0,
     ];
 

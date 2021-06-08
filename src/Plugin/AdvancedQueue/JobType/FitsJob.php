@@ -123,9 +123,18 @@ class FitsJob extends JobTypeBase
     else {
       try {
         $fits_path = $config->get("fits-path");
-        $cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath("public://"). "/". escapeshellarg($file->getFilename());
-        $xml = `$cmd`;
-        return [
+        //$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath("public://"). "/". escapeshellarg(str_replace("'", "", $file->getFilename()));
+        //$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath("public://"). "/". ((ctype_space($file->getFilename())) ? escapeshellarg($file->getFilename()): $file->getFilename());
+	//$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath($file->getFileUri());
+
+	$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath((ctype_space($file->getFileUri())) ? escapeshellarg($file->getFileUri()): $file->getFileUri());
+
+	$xml = `$cmd`;
+        
+	//$messenger = \Drupal::messenger();
+	//$messenger->addMessage($cmd, $messenger::TYPE_WARNING);
+        
+	return [
           "code" => 200,
           "message" => "Get Fits Technical Metadata successfully",
           'output' => $xml
