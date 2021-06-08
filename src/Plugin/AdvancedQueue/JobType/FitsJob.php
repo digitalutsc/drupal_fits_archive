@@ -27,7 +27,7 @@ class FitsJob extends JobTypeBase
 
       if ($result['result'] === true) {
         return JobResult::success(t($result['outcome']));
-      }else {
+      } else {
         return JobResult::failure(t($result['outcome']));
       }
 
@@ -43,7 +43,8 @@ class FitsJob extends JobTypeBase
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
    */
-  public function extractFits($file = NULL) {
+  public function extractFits($file = NULL)
+  {
     /** @var \Drupal\file\FileInterface $file */
     $report = "";
     $sucess = true;
@@ -54,13 +55,13 @@ class FitsJob extends JobTypeBase
     $fits_result = $this->getFits($file);
 
     if ($fits_result['code'] === 500) {
-      $report .= '<p>Get Fits XML: ' . $fits_result['message']. "</p>";
+      $report .= '<p>Get Fits XML: ' . $fits_result['message'] . "</p>";
       return ['result' => false, "outcome" => $report];
     }
 
-    $report .=  "<p>Get Fits XML: ". $fits_result['message']. "</p>";
+    $report .= "<p>Get Fits XML: " . $fits_result['message'] . "</p>";
     $fits_xml = $fits_result['output'];
-    
+
     $fits = simplexml_load_string($fits_xml);
     $fit_json = json_encode($fits);
 
@@ -70,14 +71,13 @@ class FitsJob extends JobTypeBase
     $fits = json_decode($fit_json);
 
     foreach ($file->getFields() as $field) {
-      if ($field->getFieldDefinition()->getType() === "string" && strpos($field->getFieldDefinition()->getName(), "_fits_") !== false)  {
+      if ($field->getFieldDefinition()->getType() === "string" && strpos($field->getFieldDefinition()->getName(), "_fits_") !== false) {
         $extractedFitsValue = jmesPathSearch(getJmespath($field->getFieldDefinition()->getDescription()), $fits);
         if (empty($extractedFitsValue)) {
-          $report .= "<p>Extract Fits: JMESPath for the field - <code>" .$field->getName(). "</code> seems to be invalid</p>";
+          $report .= "<p>Extract Fits: JMESPath for the field - <code>" . $field->getName() . "</code> seems to be invalid</p>";
           $sucess = false;
-        }
-        else {
-          $report .= "<p>Extract Fits: Field  <code>" .$field->getName(). ".value = $extractedFitsValue</code>.</p>";
+        } else {
+          $report .= "<p>Extract Fits: Field  <code>" . $field->getName() . ".value = $extractedFitsValue</code>.</p>";
         }
         $field->setValue($extractedFitsValue, $fits);
       }
@@ -119,28 +119,21 @@ class FitsJob extends JobTypeBase
       } catch (\Exception $e) {
         return ["code" => 500, 'message' => $e->getMessage()];
       }
-    }
-    else {
+    } else {
       try {
         $fits_path = $config->get("fits-path");
-        //$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath("public://"). "/". escapeshellarg(str_replace("'", "", $file->getFilename()));
-        //$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath("public://"). "/". ((ctype_space($file->getFilename())) ? escapeshellarg($file->getFilename()): $file->getFilename());
-	//$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath($file->getFileUri());
+        $cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath((ctype_space($file->getFileUri())) ? escapeshellarg($file->getFileUri()) : $file->getFileUri());
+        $xml = `$cmd`;
 
-	$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath((ctype_space($file->getFileUri())) ? escapeshellarg($file->getFileUri()): $file->getFileUri());
+        //$messenger = \Drupal::messenger();
+        //$messenger->addMessage($cmd, $messenger::TYPE_WARNING);
 
-	$xml = `$cmd`;
-        
-	//$messenger = \Drupal::messenger();
-	//$messenger->addMessage($cmd, $messenger::TYPE_WARNING);
-        
-	return [
+        return [
           "code" => 200,
           "message" => "Get Fits Technical Metadata successfully",
           'output' => $xml
         ];
-      }
-      catch (\Exception $e) {
+      } catch (\Exception $e) {
         return ["code" => 500, 'message' => $e->getMessage()];
       }
     }
