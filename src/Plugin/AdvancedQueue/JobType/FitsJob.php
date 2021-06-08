@@ -122,8 +122,17 @@ class FitsJob extends JobTypeBase
     } else {
       try {
         $fits_path = $config->get("fits-path");
-        $cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath((ctype_space($file->getFileUri())) ? escapeshellarg($file->getFileUri()) : $file->getFileUri());
-        $xml = `$cmd`;
+        //$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath((ctype_space($file->getFileUri())) ? escapeshellarg($file->getFileUri()) : $file->getFileUri());
+
+	if (strpos($file->getFileUri(), ' ') !== false ) {
+           $file_path = \Drupal::service('file_system')->realpath("public://" . escapeshellarg($file->getFilename()));
+        }
+        else {
+          $file_path = \Drupal::service('file_system')->realpath($file->getFileUri());
+        }
+        $cmd = $fits_path . " -i " . $file_path;        
+
+	$xml = `$cmd`;
 
         //$messenger = \Drupal::messenger();
         //$messenger->addMessage($cmd, $messenger::TYPE_WARNING);
