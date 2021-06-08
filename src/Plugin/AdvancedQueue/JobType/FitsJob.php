@@ -60,6 +60,7 @@ class FitsJob extends JobTypeBase
 
     $report .=  "<p>Get Fits XML: ". $fits_result['message']. "</p>";
     $fits_xml = $fits_result['output'];
+    
     $fits = simplexml_load_string($fits_xml);
     $fit_json = json_encode($fits);
 
@@ -95,27 +96,45 @@ class FitsJob extends JobTypeBase
   function getFits(\Drupal\file\Entity\File $file)
   {
     $config = \Drupal::config('fits.fitsconfig');
-    try {
-      $options = [
-        'base_uri' => $config->get("fits-server-url")
-      ];
-      $client = new Client($options);
-      $response = $client->post($config->get("fits-server-endpoint"), [
-        'multipart' => [
-          [
-            'name' => 'datafile',
-            'filename' => $file->label(),
-            'contents' => file_get_contents($file->getFileUri()),
-          ],
-        ]
-      ]);
-      return [
-        "code" => 200,
-        "message" => "Get Fits Technical Metadata successfully",
-        'output' => $response->getBody()->getContents()
-      ];
-    } catch (\Exception $e) {
-      return ["code" => 500, 'message' => $e->getMessage()];
+    if ($config->get("fits-method") === "remote") {
+      try {
+        $options = [
+          'base_uri' => $config->get("fits-server-url")
+        ];
+        $client = new Client($options);
+        $response = $client->post($config->get("fits-server-endpoint"), [
+          'multipart' => [
+            [
+              'name' => 'datafile',
+              'filename' => $file->label(),
+              'contents' => file_get_contents($file->getFileUri()),
+            ],
+          ]
+        ]);
+        return [
+          "code" => 200,
+          "message" => "Get Fits Technical Metadata successfully",
+          'output' => $response->getBody()->getContents()
+        ];
+      } catch (\Exception $e) {
+        return ["code" => 500, 'message' => $e->getMessage()];
+      }
     }
+    else {
+      try {
+        $fits_path = $config->get("fits-path");
+        $cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath("public://"). "/". escapeshellarg($file->getFilename());
+        $xml = `$cmd`;
+        return [
+          "code" => 200,
+          "message" => "Get Fits Technical Metadata successfully",
+          'output' => $xml
+        ];
+      }
+      catch (\Exception $e) {
+        return ["code" => 500, 'message' => $e->getMessage()];
+      }
+    }
+
   }
 }
