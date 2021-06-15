@@ -55,10 +55,28 @@ function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
   print_log(fits_entity_insert);
   // only extract Fits for File level only
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
-    $file = \Drupal\file\Entity\File::load($entity->id());
-    //save_fits_fields($file);
+    executeFitsAction($entity);
   }
 
+}
+
+/**
+ * Shared function call for execute Fits Action
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function executeFitsAction(Drupal\Core\Entity\EntityInterface $entity) {
+  $file = \Drupal\file\Entity\File::load($entity->id());
+
+  // trigger generate Fits action
+  $action = \Drupal::entityTypeManager()
+    ->getStorage('action')
+    ->load('fits_action');
+
+  if ($action) {
+    $action->execute([$file]);
+  }
 }
 
 /**
@@ -71,7 +89,7 @@ function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
 function fits_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
   print_log(fits_entity_update);
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
-    //save_fits_fields($entity);
+    executeFitsAction($entity);
   }
 }
 

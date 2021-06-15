@@ -1,0 +1,15 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - fits
+  enforced:
+    module:
+      - fits
+name: generate_technical_metadata_fits
+label: 'Technical Metadata with FITS'
+group: Islandora
+description: 'Defines FITS harvesting behavior'
+requireAllConditions: false
+disabled: false
+
