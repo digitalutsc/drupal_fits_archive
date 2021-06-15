@@ -52,9 +52,9 @@ function fits_node_presave($node)
  */
 function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
 {
-  print_log(fits_entity_insert);
   // only extract Fits for File level only
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
+    print_log(fits_entity_insert);
     executeFitsAction($entity);
   }
 
@@ -73,7 +73,6 @@ function executeFitsAction(Drupal\Core\Entity\EntityInterface $entity) {
   $action = \Drupal::entityTypeManager()
     ->getStorage('action')
     ->load('fits_action');
-
   if ($action) {
     $action->execute([$file]);
   }
@@ -87,9 +86,9 @@ function executeFitsAction(Drupal\Core\Entity\EntityInterface $entity) {
  * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
  */
 function fits_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
-  print_log(fits_entity_update);
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
-    executeFitsAction($entity);
+    print_log(fits_entity_update);
+    //executeFitsAction($entity);
   }
 }
 

@@ -90,16 +90,18 @@ class FitsJob extends JobTypeBase
           $report .= "<p>Extract Fits: Field  <code>" . $field->getName() . ".value = $extractedFitsValue</code>.</p>";
         }
         // search PRONOM fitst
-
-        $tid = $this->searchPRONOM($extractedFitsValue);
-        if ($tid === -1) {
-          $tid = \Drupal\taxonomy\Entity\Term::create([
-            'name' => $extractedFitsValue,
-            'vid' => "pronom",
-          ])->save();
+        if (!empty($extractedFitsValue)) {
           $tid = $this->searchPRONOM($extractedFitsValue);
+          if ($tid === -1) {
+            $tid = \Drupal\taxonomy\Entity\Term::create([
+              'name' => $extractedFitsValue,
+              'vid' => "pronom",
+            ])->save();
+            $tid = $this->searchPRONOM($extractedFitsValue);
+          }
+          $field->setValue($tid);
         }
-        $field->setValue($tid);
+
       }
     }
 
@@ -115,13 +117,15 @@ class FitsJob extends JobTypeBase
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  function searchPRONOM(String $pronom) {
+  function searchPRONOM($pronom) {
     $tid = -1;
-    $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree("pronom");
-    foreach ($terms as $term) {
-      if ($pronom === $term->name) {
-        $tid = $term->tid;
-        break;
+    if (isset($pronom)) {
+      $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree("pronom");
+      foreach ($terms as $term) {
+        if ($pronom === $term->name) {
+          $tid = $term->tid;
+          break;
+        }
       }
     }
     return $tid;
