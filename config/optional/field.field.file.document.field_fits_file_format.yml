@@ -9,7 +9,7 @@ field_name: field_fits_file_format
 entity_type: file
 bundle: document
 label: 'Fits File Format'
-description: 'identification.identity[0]."@attributes".format'
+description: "[{identification.identity[0].\"@attributes\".format}]\r\n[{identification.identity.\"@attributes\".format}]"
 required: false
 translatable: true
 default_value: {  }

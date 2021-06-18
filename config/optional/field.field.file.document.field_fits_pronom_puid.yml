@@ -10,7 +10,7 @@ field_name: field_fits_pronom_puid
 entity_type: file
 bundle: document
 label: 'Fits PRONOM PUID'
-description: identification.identity.externalIdentifier
+description: "[{identification.identity.externalIdentifier}]\r\n[{identification.identity[0].externalIdentifier}]"
 required: false
 translatable: true
 default_value: {  }

@@ -9,7 +9,7 @@ field_name: field_fits_width
 entity_type: file
 bundle: image
 label: 'Fits Width'
-description: metadata.image.imageWidth
+description: '[{metadata.image.imageWidth}]'
 required: false
 translatable: false
 default_value: {  }

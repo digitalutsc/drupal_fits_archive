@@ -8,6 +8,7 @@ dependencies:
     - field.field.file.image.field_fits_file_size
     - field.field.file.image.field_fits_height
     - field.field.file.image.field_fits_mimetype
+    - field.field.file.image.field_fits_pronom_puid
     - field.field.file.image.field_fits_width
     - field.field.file.image.field_image_alt_text
     - field.field.file.image.field_image_title_text
@@ -66,6 +67,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_fits_pronom_puid:
+    weight: 12
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_fits_width:
     weight: 10

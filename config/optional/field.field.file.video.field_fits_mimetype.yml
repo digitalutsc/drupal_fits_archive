@@ -9,7 +9,7 @@ field_name: field_fits_mimetype
 entity_type: file
 bundle: video
 label: 'Fits Mimetype'
-description: 'identification.identity[0]."@attributes".mimetype'
+description: "[{identification.identity[0].\"@attributes\".mimetype}]\r\n[{identification.identity.\"@attributes\".mimetype}]"
 required: false
 translatable: true
 default_value: {  }

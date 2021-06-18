@@ -7,6 +7,7 @@ dependencies:
     - field.field.file.video.field_fits_file_format
     - field.field.file.video.field_fits_file_size
     - field.field.file.video.field_fits_mimetype
+    - field.field.file.video.field_fits_pronom_puid
     - file_entity.type.video
   module:
     - json_field
@@ -54,6 +55,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_fits_pronom_puid:
+    weight: 8
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   filename:
     type: string_textfield

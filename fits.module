@@ -162,8 +162,9 @@ function fits_form_field_config_edit_form_alter(&$form, \Drupal\Core\Form\FormSt
 
   // limit JmesPath field modification for Fits related
   if (in_array($currentFileEntity, $fileTypes) && strpos($field, "_fits_") !== false) {
-    $form['description']['#title'] = t("One or more valid JMESPaths.");
-    $form['description']['#description'] = t("<p>JMespath(s) will be evaluated against Fits JSON field to extract data. For multiple, enter them each line. <u>ie</u> Extract Image width from FITS - JMESPath: <code>metadata:image:imageWidth</code>
+    $form['description']['#description'] = $form['description']['#description']. t("
+    <p><u></i><strong>Important Note:</strong></u> With the Fits module enabled, the Helper text can evaluate JMespath(s) against Fits JSON field to extract technical meatadata.
+    <br /><strong>Mandatory convention:</strong> <code>[{JmesPath}]</code>. For example. <code>[{fileinfo.md5checksum}]</code>. For multiple, enter them each line.
     <br />For further details about JMESPath, please visit: <a href='https://jmespath.org/tutorial.html' target='_blank'>https://jmespath.org/tutorial.html</a> </p>");
   }
 }
