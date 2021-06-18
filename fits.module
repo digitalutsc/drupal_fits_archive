@@ -197,36 +197,6 @@ function fits_form_field_ui_field_storage_add_form_alter(&$form, \Drupal\Core\Fo
 
 }
 
-/**
- * Analyze field's description text and get Jmespath
- *
- * @param $jmespath
- * @return mixed|string[]
- */
-function getJmespath($jmespath) {
-  if(strstr($jmespath, "\n")) {
-    return explode("\n", $jmespath);
-  }
-  return $jmespath;
-}
-
-/**
- * From Jmespath(s), Get value of field from Fits json
- * @param $path is Jmespath but can set as either a string or array
- */
-function jmesPathSearch($path, $fits) {
-  if (is_array($path)) {
-    $value = "";
-    foreach ($path as $p) {
-      $value = JmesPath\search($p, $fits);
-      if (!empty($value)) {
-        break;
-      }
-    }
-    return $value;
-  }
-  return JmesPath\search($path, $fits);
-}
 
 /**
  * [Unused] Loop through Fits json and get all of attributes and values

@@ -72,7 +72,7 @@ class FitsJob extends JobTypeBase
 
     foreach ($file->getFields() as $field) {
       if ($field->getFieldDefinition()->getType() === "string" && strpos($field->getFieldDefinition()->getName(), "_fits_") !== false) {
-        $extractedFitsValue = jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
+        $extractedFitsValue = $this->jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
         if (empty($extractedFitsValue)) {
           $report .= "<p>Extract Fits: JMESPath for the field - <code>" . $field->getName() . "</code> seems to be invalid</p>";
           $sucess = false;
@@ -82,7 +82,7 @@ class FitsJob extends JobTypeBase
         $field->setValue($extractedFitsValue, $fits);
       }
       else if ($field->getFieldDefinition()->getName() === "field_fits_pronom_puid") {
-        $extractedFitsValue = jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
+        $extractedFitsValue = $this->jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
         if (empty($extractedFitsValue)) {
           $report .= "<p>Extract Fits: JMESPath for the field - <code>" . $field->getName() . "</code> seems to be invalid</p>";
           $sucess = false;
@@ -118,14 +118,8 @@ class FitsJob extends JobTypeBase
    * @return mixed|string[]
    */
   function getJmespath($desc) {
-    /*if(strstr($jmespath, "\n")) {
-      return explode("\n", $jmespath);
-    }
-    return $jmespath;*/
-
     preg_match_all("/\[\{(.*?)\}\]/", $desc, $matches);
     $jmespath = $matches[1];
-    print_log($jmespath);
     if (is_array($jmespath) && count($jmespath)> 1) {
       return $jmespath;
     }
@@ -138,6 +132,23 @@ class FitsJob extends JobTypeBase
 
   }
 
+  /**
+   * From Jmespath(s), Get value of field from Fits json
+   * @param $path is Jmespath but can set as either a string or array
+   */
+  function jmesPathSearch($path, $fits) {
+    if (is_array($path)) {
+      $value = "";
+      foreach ($path as $p) {
+        $value = \JmesPath\search($p, $fits);
+        if (!empty($value)) {
+          break;
+        }
+      }
+      return $value;
+    }
+    return \JmesPath\search($path, $fits);
+  }
 
   /**
    * Search PRONOM  term
