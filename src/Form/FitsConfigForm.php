@@ -54,8 +54,8 @@ class FitsConfigForm extends ConfigFormBase
         '#title' => 'Select Fits method:',
         '#options' => array(
           0 => '-- Select --',
-          'remote' => 'FITS extraction service endpoint url',
-          'local' => 'Extract FITS for files'
+          'remote' => 'FITS Web Service',
+          'local' => 'FITS from the command-line'
         ),
       '#required' => true,
       '#ajax' => [

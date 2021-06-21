@@ -54,7 +54,6 @@ function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
 {
   // only extract Fits for File level only
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
-    print_log(fits_entity_insert);
     executeFitsAction($entity);
   }
 
@@ -67,6 +66,11 @@ function fits_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function executeFitsAction(Drupal\Core\Entity\EntityInterface $entity) {
+  // fix warning when Config form hasn't been setup
+  $config = \Drupal::config('fits.fitsconfig');
+  if (!isset($config) || empty($config->get("fits-advancedqueue_id"))) {
+    return;
+  }
   $file = \Drupal\file\Entity\File::load($entity->id());
 
   // trigger generate Fits action
@@ -87,19 +91,10 @@ function executeFitsAction(Drupal\Core\Entity\EntityInterface $entity) {
  */
 function fits_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
   if ($entity->getEntityType()->getLabel()->getUntranslatedString() === "File") {
-    print_log(fits_entity_update);
-    //executeFitsAction($entity);
+
   }
 }
 
-/**
- * Implement hook_file_presave
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
- */
-function fits_file_presave(Drupal\Core\Entity\EntityInterface $entity) {
-  print_log(fits_file_presave);
-}
 
 /**
  * Implement hook_file_view
