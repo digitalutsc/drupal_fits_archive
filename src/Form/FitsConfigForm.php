@@ -122,7 +122,7 @@ class FitsConfigForm extends ConfigFormBase
 
     $form['container']['fits-services-config']['extact-fits-while-ingesting'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Enable extracting Fits during Ingest (Not available yet)'),
+      '#title' => $this->t('Enable extracting Fits during Ingest'),
       '#default_value' => ($config->get("fits-extract-ingesting") !== null) ? $config->get("fits-extract-ingesting") : 0,
     ];
 
