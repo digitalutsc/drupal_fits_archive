@@ -25,8 +25,8 @@ This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and
 ![Fits fields config](https://www.drupal.org/files/project-images/Screen%20Shot%202021-06-23%20at%2011.17.44%20PM.png)
 
 - To add more field(s) for extracting technical metadata, click `+ Add field` button. Filling out all main fields.
-  * In the **Helper text** field (screenshot below), make sure to include one or multiple JMESPath(s) **each wrapped between "[{ }]"** (ie. [{fileinfo.md5checksum}]).
-  * For JMEASE For further details about JMESPath, please visit: https://jmespath.org/tutorial.html
+  * In the **Helper text** field (screenshot below), make sure to enter one or multiple JMESPath(s) **each wrapped between "[{ }]"** (ie. [{fileinfo.md5checksum}]).
+  * For further details about JMESPath, please visit: https://jmespath.org/tutorial.html
 
 ![Jmespath config](https://www.drupal.org/files/project-images/Screen%20Shot%202021-06-23%20at%2011.54.52%20PM.png)
 
