@@ -4,7 +4,7 @@
 
 This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and extract technical metadata for fieldable files.
 
-##Installation
+## Installation
 
 - Install JMESPath library (needed for the extraction) by `composer require 'mtdowling/jmespath.php'`.
 - [Fits XML](https://projects.iq.harvard.edu/fits/get-started-using-fits) (either REST endpoint or from command-line).
