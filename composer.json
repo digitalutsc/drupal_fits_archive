@@ -8,6 +8,9 @@
     "minimum-stability": "dev",
     "support": {
         "issues": "https://www.drupal.org/project/issues/islandora_lite_fits",
-        "source": "http://cgit.drupalcode.org/islandora_lite_fits",
+        "source": "http://cgit.drupalcode.org/islandora_lite_fits"
     },
+    "require": {
+        "mtdowling/jmespath.php": ""
+    }
 }
