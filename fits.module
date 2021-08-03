@@ -97,32 +97,6 @@ function fits_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
 
 
 /**
- * Implement hook_file_view
- *
- * @param array $build
- * @param \Drupal\Core\Entity\EntityInterface $entity
- * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
- * @param $view_mode
- */
-function fits_file_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode)
-{
-  print_log("fits_file_view");
-  /*
-  print_log("checksum: ". JmesPath\search('fileinfo.md5checksum', $fits));
-  print_log("size: ". JmesPath\search('fileinfo.size', $fits));
-  $jmespath = $file->field_fits_other->getFieldDefinition()->getDescription();
-  print_log(JmesPath\search($jmespath, $fits));
-  */
-
-  /*$file = \Drupal\file\Entity\File::load($entity->id());
-
-  print_log(getJmespath($file->field_fits_checksum->getFieldDefinition()->getDescription()));
-
-  $fits = json_decode($file->field_fits->getValue()[0]['value']);
-  print_log(JmesPath\search('identification.identity[0].""', $fits));*/
-}
-
-/**
  * Implement hook_form_FORM_ID_alter
  *
  * @param $form
