@@ -6,6 +6,7 @@
     ],
     "homepage": "https://www.drupal.org/project/fits",
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "support": {
         "issues": "https://www.drupal.org/project/issues/fits",
         "source": "http://cgit.drupalcode.org/fits"
