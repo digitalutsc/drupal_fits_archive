@@ -1,5 +1,5 @@
 {
-    "name": "islandora_lite_fits",
+    "name": "fits",
     "type": "drupal-module",
     "description": "This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and extract technical metadata for fieldable files.",
     "keywords": [
