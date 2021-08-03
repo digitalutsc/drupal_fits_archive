@@ -185,7 +185,7 @@ class FitsJob extends JobTypeBase
           'base_uri' => $config->get("fits-server-url")
         ];
         $client = new Client($options);
-        $response = $client->post($config->get("fits-server-endpoint"), [
+        $response = $client->post($config->get("fits-server-url"), [
           'multipart' => [
             [
               'name' => 'datafile',

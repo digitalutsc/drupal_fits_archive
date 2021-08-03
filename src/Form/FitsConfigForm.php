@@ -80,16 +80,7 @@ class FitsConfigForm extends ConfigFormBase
         '#title' => $this
           ->t('Fits XML Services URL:'),
         '#default_value' => ($config->get("fits-server-url") !== null) ? $config->get("fits-server-url") : "",
-        '#description' => $this->t('For example: <code>http://localhost:8080/fits/</code>')
-      );
-
-      $form['container']['fits-services-config']['textfields_container']['endpoint'] = array(
-        '#type' => 'textfield',
-        '#name' => 'endpoint',
-        '#title' => $this
-          ->t('Fits XML Services Endpoint:'),
-        '#default_value' => ($config->get("fits-server-endpoint") !== null) ? $config->get("fits-server-endpoint") : "",
-        '#description' => $this->t('For example: <code>examine</code>')
+        '#description' => $this->t('For example: <code>http://localhost:8080/fits/examine</code>')
       );
     }
     else if ($form_state->getValues()['method'] === "local" || (empty($form_state->getValues()['method']) && $config->get("fits-method") === "local")) {
@@ -122,7 +113,7 @@ class FitsConfigForm extends ConfigFormBase
 
     $form['container']['fits-services-config']['extact-fits-while-ingesting'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Enable extracting Fits during Ingest'),
+      '#title' => $this->t('Extracting Fits while a file is being uploaded'),
       '#default_value' => ($config->get("fits-extract-ingesting") !== null) ? $config->get("fits-extract-ingesting") : 0,
     ];
 
@@ -150,7 +141,6 @@ class FitsConfigForm extends ConfigFormBase
     }
     else {
       $configFactory->set("fits-server-url", $form_state->getValues()['server-url']);
-      $configFactory->set("fits-server-endpoint", $form_state->getValues()['endpoint']);
       $configFactory->set("fits-path", "");
     }
 
