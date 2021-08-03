@@ -11,10 +11,6 @@
         "source": "http://cgit.drupalcode.org/fits"
     },
     "require": {
-        "mtdowling/jmespath.php": "*",
-        "drupal/json_field": ">=1.0@RC",
-        "drupal/file_entity":">=2.0@beta",
-        "drupal/field_permissions":">=1.1",
-        "drupal/advancedqueue":">=1.0@RC"
+        "mtdowling/jmespath.php": "*"
     }
 }
