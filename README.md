@@ -8,7 +8,7 @@ This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and
 
 - Install JMESPath library (needed for the extraction) by `composer require 'mtdowling/jmespath.php'`.
 - [Fits XML](https://projects.iq.harvard.edu/fits/get-started-using-fits) (either REST endpoint or from command-line).
-- Drupal modules dependencies, so highly recommend install this module by composer: `composer require 'drupal\....'`.
+- Drupal modules dependencies, so highly recommend install this module by composer: `composer require 'drupal/fits'`.
   - [JSON Field](https://www.drupal.org/project/json_field)
   - [File Entity (fieldable files)](https://www.drupal.org/project/file_entity)
   - [Field Permissions](https://www.drupal.org/project/field_permissions)
