@@ -72,26 +72,29 @@ class FitsConfigForm extends ConfigFormBase
       '#attributes' => ['id' => 'textfields-container'],
     ];
 
-    if ($form_state->getValues()['method'] === "remote" || (empty($form_state->getValues()['method']) && $config->get("fits-method") === "remote")) {
+    if ($form_state->getValues()['method'] !== null) {
+        if ($form_state->getValues()['method'] === "remote" || (empty($form_state->getValues()['method']) && $config->get("fits-method") === "remote")) {
 
-      $form['container']['fits-services-config']['textfields_container']['server-url'] = array(
-        '#type' => 'textfield',
-        '#name' => 'server-url',
-        '#title' => $this
-          ->t('Fits XML Services URL:'),
-        '#default_value' => ($config->get("fits-server-url") !== null) ? $config->get("fits-server-url") : "",
-        '#description' => $this->t('For example: <code>http://localhost:8080/fits/examine</code>')
-      );
+            $form['container']['fits-services-config']['textfields_container']['server-url'] = array(
+                '#type' => 'textfield',
+                '#name' => 'server-url',
+                '#title' => $this
+                    ->t('Fits XML Services URL:'),
+                '#default_value' => ($config->get("fits-server-url") !== null) ? $config->get("fits-server-url") : "",
+                '#description' => $this->t('For example: <code>http://localhost:8080/fits/examine</code>')
+            );
+        }
+        else if ($form_state->getValues()['method'] === "local" || (empty($form_state->getValues()['method']) && $config->get("fits-method") === "local")) {
+            $form['container']['fits-services-config']['textfields_container']['fits-path'] = array(
+                '#type' => 'textfield',
+                '#title' => $this
+                    ->t('System path to FITS processor:'),
+                '#default_value' => ($config->get("fits-path") !== null) ? $config->get("fits-path") : "",
+                '#description' => $this->t('Example: <code>/usr/bin/fits.sh</code>')
+            );
+        }
     }
-    else if ($form_state->getValues()['method'] === "local" || (empty($form_state->getValues()['method']) && $config->get("fits-method") === "local")) {
-      $form['container']['fits-services-config']['textfields_container']['fits-path'] = array(
-        '#type' => 'textfield',
-        '#title' => $this
-          ->t('System path to FITS processor:'),
-        '#default_value' => ($config->get("fits-path") !== null) ? $config->get("fits-path") : "",
-        '#description' => $this->t('Example: <code>/usr/bin/fits.sh</code>')
-      );
-    }
+
 
     $form['container']['fits-services-config']['op-config'] = [
       '#type' => 'container',
