@@ -98,18 +98,6 @@ function fits_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
 
 /**
  * Implement hook_form_FORM_ID_alter
- *
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
- */
-function fits_form_file_video_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
-{
-  print_log("fits_form_file_video_edit_form_alter");
-}
-
-/**
- * Implement hook_form_FORM_ID_alter
  * Purpose: Modify the Help text field to repurpose its use to contain Jmespath
  * Only effect for Fits related field (must contain the word "fits" to it)
  * @param $form
