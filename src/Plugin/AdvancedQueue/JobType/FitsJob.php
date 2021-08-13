@@ -46,6 +46,7 @@ class FitsJob extends JobTypeBase
   public function extractFits($file = NULL)
   {
     /** @var \Drupal\file\FileInterface $file */
+    $config = \Drupal::config('fits.fitsconfig');
     $report = "";
     $sucess = true;
     if (!isset($file)) {
@@ -69,13 +70,14 @@ class FitsJob extends JobTypeBase
     $file->field_fits->setValue($fit_json);
 
     $fits = json_decode($fit_json);
-
     foreach ($file->getFields() as $field) {
       if ($field->getFieldDefinition()->getType() === "string" && strpos($field->getFieldDefinition()->getName(), "_fits_") !== false) {
         $extractedFitsValue = $this->jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
         if (empty($extractedFitsValue)) {
           $report .= "<p>Extract Fits: JMESPath for the field - <code>" . $field->getName() . "</code> seems to be invalid</p>";
-          $sucess = false;
+            if (in_array($field->getFieldDefinition()->getName(), $config->get("fits-default-fields"))) {
+                $sucess = false;
+            }
         } else {
           $report .= "<p>Extract Fits: Field  <code>" . $field->getName() . ".value = $extractedFitsValue</code>.</p>";
         }
@@ -85,7 +87,9 @@ class FitsJob extends JobTypeBase
         $extractedFitsValue = $this->jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
         if (empty($extractedFitsValue)) {
           $report .= "<p>Extract Fits: JMESPath for the field - <code>" . $field->getName() . "</code> seems to be invalid</p>";
-          $sucess = false;
+            if (in_array($field->getFieldDefinition()->getName(), $config->get("fits-default-fields"))) {
+                $sucess = false;
+            }
         } else {
           $report .= "<p>Extract Fits: Field  <code>" . $field->getName() . ".value = $extractedFitsValue</code>.</p>";
         }
