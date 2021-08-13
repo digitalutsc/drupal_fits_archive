@@ -70,8 +70,6 @@ class FitsJob extends JobTypeBase
     $file->field_fits->setValue($fit_json);
 
     $fits = json_decode($fit_json);
-    print_log("--------");
-    print_log($config->get("fits-default-fields"));
     foreach ($file->getFields() as $field) {
       if ($field->getFieldDefinition()->getType() === "string" && strpos($field->getFieldDefinition()->getName(), "_fits_") !== false) {
         $extractedFitsValue = $this->jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
