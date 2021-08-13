@@ -56,11 +56,11 @@ class FitsJob extends JobTypeBase
     $fits_result = $this->getFits($file);
 
     if ($fits_result['code'] === 500) {
-      $report .= '<p>Get Fits XML: ' . $fits_result['message'] . "</p>";
+      $report .= 'Get Fits XML: ' . $fits_result['message'] . "\n";
       return ['result' => false, "outcome" => $report];
     }
 
-    $report .= "<p>Get Fits XML: " . $fits_result['message'] . "</p>";
+    $report .= "Get Fits XML: " . $fits_result['message'] . "\n";
     $fits_xml = $fits_result['output'];
 
     $fits = simplexml_load_string($fits_xml);
@@ -74,24 +74,24 @@ class FitsJob extends JobTypeBase
       if ($field->getFieldDefinition()->getType() === "string" && strpos($field->getFieldDefinition()->getName(), "_fits_") !== false) {
         $extractedFitsValue = $this->jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
         if (empty($extractedFitsValue)) {
-          $report .= "<p>Extract Fits: JMESPath for the field - <code>" . $field->getName() . "</code> seems to be invalid</p>";
+          $report .= "Extract Fits: JMESPath for the field - " . $field->getName() . " seems to be invalid\n";
             if (in_array($field->getFieldDefinition()->getName(), $config->get("fits-default-fields"))) {
                 $sucess = false;
             }
         } else {
-          $report .= "<p>Extract Fits: Field  <code>" . $field->getName() . ".value = $extractedFitsValue</code>.</p>";
+          $report .= "Extract Fits: Field  " . $field->getName() . ".value = $extractedFitsValue.\n";
         }
         $field->setValue($extractedFitsValue, $fits);
       }
       else if ($field->getFieldDefinition()->getName() === "field_fits_pronom_puid") {
         $extractedFitsValue = $this->jmesPathSearch($this->getJmespath($field->getFieldDefinition()->getDescription()), $fits);
         if (empty($extractedFitsValue)) {
-          $report .= "<p>Extract Fits: JMESPath for the field - <code>" . $field->getName() . "</code> seems to be invalid</p>";
+          $report .= "Extract Fits: JMESPath for the field - " . $field->getName() . " seems to be invalid\n";
             if (in_array($field->getFieldDefinition()->getName(), $config->get("fits-default-fields"))) {
                 $sucess = false;
             }
         } else {
-          $report .= "<p>Extract Fits: Field  <code>" . $field->getName() . ".value = $extractedFitsValue</code>.</p>";
+          $report .= "Extract Fits: Field  " . $field->getName() . ".value = $extractedFitsValue.\n";
         }
         // search PRONOM fitst
         if (!empty($extractedFitsValue)) {
