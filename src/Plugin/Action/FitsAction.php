@@ -36,6 +36,7 @@ class FitsAction extends ActionBase {
     // Create a job and add to Advanced Queue
     $payload = [
       'fid' => $file->id(),
+      'file_name' => $file->getFilename(),
       'type' => $file->getEntityTypeId(),
       'action' => "extract_Fits"
     ];
