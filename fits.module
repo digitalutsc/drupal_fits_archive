@@ -271,3 +271,13 @@ if (!function_exists('logging')) {
 }
 
 
+/**
+ * Debug function: display any variable to drupal Reports Log messages
+ *
+ */
+if (!function_exists('drupal_log')) {
+  function drupal_log($msg)
+  {
+    \Drupal::logger(basename(__FILE__, '.module'))->error($msg);
+  }
+}

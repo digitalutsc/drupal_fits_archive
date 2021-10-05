@@ -178,7 +178,7 @@ class FitsJob extends JobTypeBase
   /**
    * Rest call to Fits
    * @param \Drupal\file\Entity\File $file
-   * @return string
+   * @return array
    */
   function getFits(\Drupal\file\Entity\File $file)
   {
@@ -198,11 +198,21 @@ class FitsJob extends JobTypeBase
             ],
           ]
         ]);
-        return [
-          "code" => 200,
-          "message" => "Get Fits Technical Metadata successfully",
-          'output' => $response->getBody()->getContents()
-        ];
+        if (isset($response)) {
+            return [
+                "code" => 200,
+                "message" => "Get Fits Technical Metadata successfully",
+                'output' => $response->getBody()->getContents()
+            ];
+        }
+        else {
+            return [
+                "code" => 417,
+                "message" => "Failed Get Fits Technical Metadata.",
+                'output' => $response->getBody()->getContents()
+            ];
+        }
+
       } catch (\Exception $e) {
         return ["code" => 500, 'message' => $e->getMessage()];
       }
@@ -211,23 +221,30 @@ class FitsJob extends JobTypeBase
         $fits_path = $config->get("fits-path");
         //$cmd = $fits_path . " -i " . \Drupal::service('file_system')->realpath((ctype_space($file->getFileUri())) ? escapeshellarg($file->getFileUri()) : $file->getFileUri());
 
-        if (strpos($file->getFileUri(), ' ') !== false) {
-          $file_path = \Drupal::service('file_system')->realpath("public://" . escapeshellarg($file->getFilename()));
+        if (strpos($file->getFilename(), ' ') !== false) {
+          $file_path = str_replace($file->getFilename(),  escapeshellarg($file->getFilename()), $file->getFileUri());
+          $file_path = \Drupal::service('file_system')->realpath($file_path);
         } else {
           $file_path = \Drupal::service('file_system')->realpath($file->getFileUri());
         }
         $cmd = $fits_path . " -i " . $file_path;
-
         $xml = `$cmd`;
+        //drupal_log($cmd);
+        if (isset($xml)) {
+            return [
+                "code" => 200,
+                "message" => "Get Fits Technical Metadata successfully",
+                'output' => $xml
+            ];
+        }
+        else {
+            return [
+                "code" => 417,
+                "message" => "Failed to get Fits Technical Metadata.",
+                'output' => $xml
+            ];
+        }
 
-        //$messenger = \Drupal::messenger();
-        //$messenger->addMessage($cmd, $messenger::TYPE_WARNING);
-
-        return [
-          "code" => 200,
-          "message" => "Get Fits Technical Metadata successfully",
-          'output' => $xml
-        ];
       } catch (\Exception $e) {
         return ["code" => 500, 'message' => $e->getMessage()];
       }
