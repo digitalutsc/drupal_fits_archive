@@ -38,7 +38,9 @@ class FitsAction extends ActionBase {
       'fid' => $file->id(),
       'file_name' => $file->getFilename(),
       'type' => $file->getEntityTypeId(),
-      'action' => "extract_Fits"
+      'action' => "extract_Fits",
+        'max_tries' => $config->get("aqj-max-retries"),
+        'retry_delay' => $config->get("aqj-retry_delay"),
     ];
 
     $job = Job::create('fits_job', $payload);

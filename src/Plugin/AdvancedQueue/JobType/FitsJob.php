@@ -21,6 +21,11 @@ class FitsJob extends JobTypeBase
     // TODO: Implement process() method.
     try {
       $payload = $job->getPayload();
+
+      // set retry config
+      $this->pluginDefinition['max_retries'] = $payload['max_tries'];
+      $this->pluginDefinition['retry_delay'] = $payload['retry_delay'];
+
       /** @var \Drupal\file\FileInterface $file */
       $file = \Drupal\file\Entity\File::load($payload['fid']);
       $result = $this->extractFits($file);
