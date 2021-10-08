@@ -94,7 +94,10 @@ class FitsConfigForm extends ConfigFormBase
 
 
         $form['container']['fits-services-config']['op-config'] = [
-            '#type' => 'container',
+            '#type' => 'details',
+            '#title' => $this
+                ->t('Advanced Queue Configuration'),
+            '#open' => true
         ];
 
         $queues = array('0' => "-- Select --");
@@ -102,7 +105,7 @@ class FitsConfigForm extends ConfigFormBase
         $form['container']['fits-services-config']['op-config']['advancedqueue-id'] = array(
             '#type' => 'select',
             '#name' => 'advancedqueue-id',
-            '#title' => $this->t('Advanced queues:'),
+            '#title' => $this->t('Select a queue'),
             '#required' => TRUE,
             '#default_value' => ($config->get("fits-advancedqueue_id") !== null) ? $config->get("fits-advancedqueue_id") : 0,
             '#options' => $queues,
@@ -110,6 +113,22 @@ class FitsConfigForm extends ConfigFormBase
         $form['container']['fits-services-config']['op-config']['link-to-add-queue'] = [
             '#markup' => $this->t('To create a new queue, <a href="/admin/config/system/queues/add" target="_blank">Click here</a>'),
         ];
+
+        $form['container']['fits-services-config']['op-config']['number-of-retries'] = array(
+            '#type' => 'number',
+            '#title' => $this
+                ->t('Number of retries:'),
+            '#description' => $this->t("If a job is failed to run, set number of retries"),
+            '#default_value' => ($config->get("aqj-max-retries") !== null) ? $config->get("aqj-max-retries") : 5
+        );
+
+        $form['container']['fits-services-config']['op-config']['retries-delay'] = array(
+            '#type' => 'number',
+            '#title' => $this
+                ->t('Retry Delay (in seconds):'),
+            '#description' => $this->t("Set the delay time (in seconds) for a job to re-run each time."),
+            '#default_value' => ($config->get("aqj-retry_delay") !== null) ? $config->get("aqj-retry_delay") : 100
+        );
 
         $form['container']['fits-services-config']['extact-fits-while-ingesting'] = [
             '#type' => 'checkbox',
@@ -172,6 +191,8 @@ class FitsConfigForm extends ConfigFormBase
         }
 
         $configFactory->set("fits-advancedqueue_id", $form_state->getValues()['advancedqueue-id']);
+        $configFactory->set("aqj-max-retries", $form_state->getValues()['number-of-retries']);
+        $configFactory->set("aqj-retry_delay", $form_state->getValues()['retries-delay']);
         $configFactory->set("fits-extract-ingesting", $form_state->getValues()['extact-fits-while-ingesting']);
         $configFactory->set("fits-default-fields", array_keys(array_filter($form_state->getValues()['default-fits-fields'])));
 
