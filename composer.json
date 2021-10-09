@@ -1,13 +1,18 @@
 {
-    "name": "islandora_lite_fits",
+    "name": "Fits for Drupal",
     "type": "drupal-module",
-    "description": "This module represent DSU's approach toward Fits in our Islandora Lite Stack",
-    "keywords": [
+    "description": "This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and extract technical metadata for fieldable files.",
+    "keywords": [ 
+	"fits",
+	"Technical metadata"
     ],
-    "homepage": "https://www.drupal.org/project/islandora_lite_fits",
+    "homepage": "https://www.drupal.org/project/fits",
     "minimum-stability": "dev",
     "support": {
-        "issues": "https://www.drupal.org/project/issues/islandora_lite_fits",
-        "source": "http://cgit.drupalcode.org/islandora_lite_fits",
+        "issues": "https://www.drupal.org/project/issues/fits",
+        "source": "https://git.drupalcode.org/project/fits"
     },
+    "require": {
+        "mtdowling/jmespath.php": "*"
+    }
 }
