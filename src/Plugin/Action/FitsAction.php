@@ -7,7 +7,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\advancedqueue\Entity\Queue;
 use Drupal\advancedqueue\Job;
 
-
 /**
  * Provides a 'FitsAction' action.
  *
@@ -20,27 +19,30 @@ use Drupal\advancedqueue\Job;
  */
 class FitsAction extends ActionBase {
 
-
-  public function access($file, AccountInterface $account = NULL, $return_as_object = FALSE)
-  {
+  /**
+   * Implements access()
+   */
+  public function access($file, AccountInterface $account = NULL, $return_as_object = FALSE) {
     /** @var \Drupal\file\FileInterface $file */
     $access = $file->access('update', $account, TRUE)
       ->andIf($file->access('edit', $account, TRUE));
     return $return_as_object ? $access : $access->isAllowed();
   }
 
-  public function execute($file = NULL)
-  {
+  /**
+   * Implements execute().
+   */
+  public function execute($file = NULL) {
     /** @var \Drupal\file\FileInterface $file */
     $config = \Drupal::config('fits.fitsconfig');
-    // Create a job and add to Advanced Queue
+    // Create a job and add to Advanced Queue.
     $payload = [
       'fid' => $file->id(),
       'file_name' => $file->getFilename(),
       'type' => $file->getEntityTypeId(),
       'action' => "extract_Fits",
-        'max_tries' => $config->get("aqj-max-retries"),
-        'retry_delay' => $config->get("aqj-retry_delay"),
+      'max_tries' => $config->get("aqj-max-retries"),
+      'retry_delay' => $config->get("aqj-retry_delay"),
     ];
 
     $job = Job::create('fits_job', $payload);
@@ -49,6 +51,5 @@ class FitsAction extends ActionBase {
       $q->enqueueJob($job);
     }
   }
-
 
 }
