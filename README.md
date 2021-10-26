@@ -18,7 +18,7 @@ This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and
 
 - Visit  `/admin/config/system/fits` as screenshot below:
 
-![Fits config](https://www.drupal.org/files/project-images/Screen%20Shot%202021-06-23%20at%2011.10.11%20PM.png)
+![Fits config](https://www.drupal.org/files/project-images/Screen%20Shot%202021-10-09%20at%2010.27.03%20PM.png)
 
 - Visit `/admin/structure/file-types`, then click `Edit` in each File type for further detail and configure on Technical metadata fields.
 
@@ -37,7 +37,9 @@ This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and
 - To run the queues, there are 3 ways:
   - By Cron at `admin/config/system/cron`
   - By drush/drupal by `drush advancedqueue:queue:process [{ queue name }]` in terminal.
-  - By [Advanced Queue Runner](https://www.drupal.org/project/advancedqueue_runner)
+  - By [Advanced Queue Runner](https://www.drupal.org/project/advancedqueue_runner) with options:
+    - Set number of retries if a Fits job is failure. 
+    - Set delay between each re-tries.  
 - When a job is executed, there are 2 main operations:
   * Retrieve Fits: It will consume Fits XML to retrieve technical metadata in XML, then convert it to JSON and save it in the `field_fits`.
   * Extraction: After the technical metadata is saved in the json field `field_fits`, the extraction for each field based on JMESPaths which are defined in each Fits fields.
