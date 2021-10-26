@@ -10,6 +10,8 @@ use GuzzleHttp\Client;
 use Drupal\advancedqueue\JobResult;
 
 /**
+ * Fits Job definition.
+ *
  * @AdvancedQueueJobType(
  *   id = "fits_job",
  *   label = @Translation("Fits"),
@@ -33,10 +35,10 @@ class FitsJob extends JobTypeBase {
       $result = $this->extractFits($file);
 
       if ($result['result'] === TRUE) {
-        return JobResult::success($this->t($result['outcome']));
+        return JobResult::success($this->t("%outcome", ['%outcome' => $result['outcome']]));
       }
       else {
-        return JobResult::failure($this->t($result['outcome']));
+        return JobResult::failure($this->t("%outcome", ['%outcome' => $result['outcome']]));
       }
 
     }
@@ -71,7 +73,9 @@ class FitsJob extends JobTypeBase {
     $fit_json = json_encode($fits);
 
     // Store the whole fits to json field.
-    $file->field_fits->setValue($fit_json);
+    if ($file->hasField(field_fits)) {
+      $file->field_fits->setValue($fit_json);
+    }
 
     $fits = json_decode($fit_json);
     foreach ($file->getFields() as $field) {
@@ -224,7 +228,6 @@ class FitsJob extends JobTypeBase {
         }
         $cmd = $fits_path . " -i " . $file_path;
         $xml = `$cmd`;
-        // drupal_log($cmd);
         if (isset($xml)) {
           return [
             "code" => 200,
