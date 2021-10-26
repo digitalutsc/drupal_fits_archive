@@ -219,15 +219,13 @@ class FitsJob extends JobTypeBase {
     else {
       try {
         $fits_path = $config->get("fits-path");
-        if (strpos($file->getFilename(), ' ') !== FALSE) {
-          $file_path = str_replace($file->getFilename(), escapeshellarg($file->getFilename()), $file->getFileUri());
-          $file_path = \Drupal::service('file_system')->realpath($file_path);
-        }
-        else {
-          $file_path = \Drupal::service('file_system')->realpath($file->getFileUri());
-        }
-        $cmd = $fits_path . " -i " . $file_path;
+        $file_path = \Drupal::service('file_system')->realpath($file->getFileUri());
+        $cmd = $fits_path . " -i '" . $file_path . "'";
+
+        // Set env LANG for file name in multiple languages.
+        putenv('LANG=en_US.UTF-8');
         $xml = `$cmd`;
+
         if (isset($xml)) {
           return [
             "code" => 200,
