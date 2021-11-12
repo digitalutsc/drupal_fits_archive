@@ -11,6 +11,7 @@
         "issues": "https://www.drupal.org/project/issues/fits",
         "source": "https://git.drupalcode.org/project/fits"
     },
+    "minimum-stability": "dev",
     "require": {
         "mtdowling/jmespath.php": "*"
     },
