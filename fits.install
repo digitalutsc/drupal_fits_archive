@@ -1,0 +1,20 @@
+<?php
+
+function fits_requirements($phase): array {
+  $requirements = [];
+  if (!class_exists('JmesPath\\AstRuntime')) {
+    $arguments = [
+      ':docs' => 'https://www.drupal.org/docs/8/theming-drupal-8/adding-stylesheets-css-and-javascript-js-to-a-drupal-8-theme#external',
+      ':readme' => 'https://www.drupal.org/project/fits',
+      ':lib' => "composer require 'mtdowling/jmespath.php'"
+    ];
+
+    $requirements['JmesPath.php'] = [
+      'title' => t('JmesPath.php'),
+      'value' => t('JmesPath.php is not installed.'),
+      'severity' => REQUIREMENT_ERROR,
+      'description' => t('The <i>JmesPath.php</i> library is not installed. Run <i><code>:lib</code></i> to install it, check the <a href=":readme">README.md</a> for more information and <a href=":docs">the documentation for information on how to install a library</a>.', $arguments),
+    ];
+  }
+  return $requirements;
+}
