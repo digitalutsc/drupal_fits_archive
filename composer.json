@@ -13,7 +13,8 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "mtdowling/jmespath.php": "*"
+        "mtdowling/jmespath.php": "*",
+        "islandora/jsonld": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^8",
