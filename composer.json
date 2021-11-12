@@ -12,9 +12,18 @@
         "source": "https://git.drupalcode.org/project/fits"
     },
     "minimum-stability": "dev",
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    },
     "require": {
         "mtdowling/jmespath.php": "*",
-        "islandora/jsonld": "*"
+        "drupal/json_field": "*",
+        "drupal/file_entity": "*",
+        "drupal/field_permissions": "*",
+        "drupal/advancedqueue": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^8",
