@@ -1,12 +1,20 @@
 <?php
 
+/**
+ * @file
+ * Contains fits.install.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
 function fits_requirements($phase): array {
   $requirements = [];
   if (!class_exists('JmesPath\\AstRuntime')) {
     $arguments = [
       ':docs' => 'https://www.drupal.org/docs/8/theming-drupal-8/adding-stylesheets-css-and-javascript-js-to-a-drupal-8-theme#external',
       ':readme' => 'https://www.drupal.org/project/fits',
-      ':lib' => "composer require 'mtdowling/jmespath.php'"
+      ':lib' => "composer require 'mtdowling/jmespath.php'",
     ];
 
     $requirements['JmesPath.php'] = [

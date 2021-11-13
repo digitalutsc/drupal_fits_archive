@@ -1,11 +1,12 @@
 {
-    "name": "Fits for Drupal",
+    "name": "digitalutsc/drupal_fits",
     "type": "drupal-module",
     "description": "This Drupal 8/9 module consumes File Information Tool Set (Fits) to retrieve and extract technical metadata for fieldable files.",
     "keywords": [
         "fits",
         "Technical metadata"
     ],
+    "license": "GPL-2.0-only",
     "homepage": "https://www.drupal.org/project/fits",
     "support": {
         "issues": "https://www.drupal.org/project/issues/fits",
